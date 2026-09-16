@@ -691,8 +691,10 @@ A Bisseção continua sendo uma opção interessante quando a prioridade é a ro
 
 ---
 
-# Referências
+# 18. Referências
 
 RUGGIERO, Márcia A. Gomes; LOPES, Vera Lúcia da Rocha. *Cálculo numérico: aspectos teóricos e computacionais*. 2. ed. São Paulo: Pearson Makron Books, 1996.
+
+Métodos numéricos e computacionais na prática de engenharias e ciências / Reyolando M. L. R. F. Brasil, José Manoel Balthazar, Wesley Góis. – São Paulo: Blucher, 2015. 
 
 Material didático da disciplina de Métodos Numéricos disponibilizado pelo professor.

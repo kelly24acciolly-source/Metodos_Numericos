@@ -302,20 +302,17 @@ $$
 Calculamos as alturas:
 
 $$
-a=\sqrt{900-x^2}
-\approx25,2421665848\text{ m}
+a = \sqrt{900-x^2} \approx25,2421665848\text{ m}
 $$
 
 $$
-b=\sqrt{400-x^2}
-\approx11,7118305101\text{ m}
+b = \sqrt{400-x^2} \approx11,7118305101\text{ m}
 $$
 
 Substituindo na equação original:
 
 $$
-\frac{1}{a}+\frac{1}{b}
-\approx0,125000000004
+\frac{1}{a}+\frac{1}{b} \approx0,125000000004
 $$
 
 Enquanto:
@@ -327,14 +324,7 @@ $$
 O erro é:
 
 $$
-\left|
-\frac{1}{8}
--
-\frac{1}{a}
--
-\frac{1}{b}
-\right|
-\approx4,309\times10^{-12}
+\left| \frac{1}{8} - \frac{1}{a} - \frac{1}{b} \right| \approx4,309\times10^{-12}
 $$
 
 A diferença é praticamente zero dentro da tolerância definida.

@@ -47,11 +47,7 @@ $$
 Substituindo `a` e `b`:
 
 $$
-\frac{1}{8}
-=
-\frac{1}{\sqrt{900-x^2}}
-+
-\frac{1}{\sqrt{400-x^2}}
+\frac{1}{8} = \frac{1}{\sqrt{900-x^2}} + \frac{1}{\sqrt{400-x^2}}
 $$
 
 O problema consiste em encontrar numericamente `x`.
@@ -63,13 +59,7 @@ O problema consiste em encontrar numericamente `x`.
 Para aplicar os métodos numéricos, colocamos toda a expressão em um único lado:
 
 $$
-f(x)
-=
-\frac{1}{8}
--
-\frac{1}{\sqrt{900-x^2}}
--
-\frac{1}{\sqrt{400-x^2}}
+f(x) = \frac{1}{8} - \frac{1}{\sqrt{900-x^2}} - \frac{1}{\sqrt{400-x^2}}
 $$
 
 Assim, procuramos uma raiz tal que:
@@ -83,11 +73,7 @@ $$
 O método de Newton-Raphson precisa da derivada de `f(x)`:
 
 $$
-f'(x)
-=
--\frac{x}{(900-x^2)^{3/2}}
--
-\frac{x}{(400-x^2)^{3/2}}
+f'(x) = -\frac{x}{(900-x^2)^{3/2}} - \frac{x}{(400-x^2)^{3/2}}
 $$
 
 ---
@@ -165,11 +151,7 @@ Depois verifica-se em qual metade do intervalo permanece a mudança de sinal.
 O método utiliza a derivada da função:
 
 $$
-x_{k+1}
-=
-x_k
--
-\frac{f(x_k)}{f'(x_k)}
+x_{k+1} = x_k - \frac{f(x_k)}{f'(x_k)}
 $$
 
 Foi utilizado como chute inicial:
@@ -197,13 +179,7 @@ A Secante é semelhante ao método de Newton-Raphson, mas não precisa que a der
 A fórmula utilizada é:
 
 $$
-x_{k+1}
-=
-x_k
--
-f(x_k)
-\frac{x_k-x_{k-1}}
-{f(x_k)-f(x_{k-1})}
+x_{k+1} = x_k - f(x_k) \frac{x_k-x_{k-1}} {f(x_k)-f(x_{k-1})}
 $$
 
 Foram utilizados:

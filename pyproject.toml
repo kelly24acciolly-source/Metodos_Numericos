@@ -5,6 +5,9 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "metodos-numericos"
 version = "0.1.0"
-description = "Pacote de métodos numéricos
+description = "Pacote de métodos numéricos"
 requires-python = ">=3.11"
-dependencias = []
+dependencies = [
+    "pandas",
+    "matplotlib"
+]

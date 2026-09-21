@@ -59,7 +59,7 @@ O problema consiste em encontrar numericamente `x`.
 Para aplicar os métodos numéricos, colocamos toda a expressão em um único lado:
 
 $$
-f(x) = \frac{1}{8} - \frac{1}{\sqrt{900-x^2}} - \frac{1}{\sqrt{400-x^2}}
+f(x) = \frac{1}{\sqrt{900-x^2}} + \frac{1}{\sqrt{400-x^2}} - \frac{1}{8}
 $$
 
 Assim, procuramos uma raiz tal que:
@@ -73,7 +73,7 @@ $$
 O método de Newton-Raphson precisa da derivada de `f(x)`:
 
 $$
-f'(x) = -\frac{x}{(900-x^2)^{3/2}} - \frac{x}{(400-x^2)^{3/2}}
+f'(x) = \frac{x}{(900-x^2)^{3/2}} + \frac{x}{(400-x^2)^{3/2}}
 $$
 
 ---
@@ -362,9 +362,9 @@ A biblioteca `pandas` é utilizada para organizar as tabelas de iterações e `m
 ```python
 def f(x):
     return (
-        1/8
-        - 1/math.sqrt(30**2 - x**2)
-        - 1/math.sqrt(20**2 - x**2)
+        1/math.sqrt(30**2 - x**2)
+        + 1/math.sqrt(20**2 - x**2)
+        - 1/8
     )
 ```
 
@@ -375,8 +375,8 @@ def f(x):
 ```python
 def df(x):
     return (
-        -x/(30**2 - x**2)**1.5
-        -x/(20**2 - x**2)**1.5
+        x/(30**2 - x**2)**1.5
+        + x/(20**2 - x**2)**1.5
     )
 ```
 
@@ -385,26 +385,23 @@ def df(x):
 ## Método da Bisseção
 
 ```python
-def bissecao(a, b, tol=1e-10, max_iter=100):
-    fa = f(a)
-    historico = []
-
-    for k in range(1, max_iter + 1):
+def bissessao(f, a, b, eps=1e-10, k_max=100):
+    k = 0
+    while k < k_max:
         x = (a + b) / 2
         fx = f(x)
 
-        historico.append([k, a, b, x, fx, abs(fx)])
-
-        if abs(fx) < tol or (b - a) / 2 < tol:
-            return x, historico
-
-        if fa * fx < 0:
+        if abs(fx) < eps or (b - a) / 2 < eps:
+            return x, k + 1
+        
+        if f(a) * fx < 0:
             b = x
         else:
             a = x
-            fa = fx
 
-    return x, historico
+        k = k + 1
+
+    return x, k
 ```
 
 ---
@@ -412,31 +409,23 @@ def bissecao(a, b, tol=1e-10, max_iter=100):
 ## Método de Newton-Raphson
 
 ```python
-def newton(x0, tol=1e-10, max_iter=100):
-    historico = []
+def newton_raphson(f, f_, x0, eps_1=1e-10, eps_2, k_max=100):
+    k = 0
+
     x = x0
 
-    for k in range(1, max_iter + 1):
-        fx = f(x)
-        dfx = df(x)
+    while k < k_max:
+        x_novo = x - f(x) / f_(x)
 
-        x_novo = x - fx / dfx
-
-        historico.append([
-            k,
-            x,
-            fx,
-            dfx,
-            x_novo,
-            abs(f(x_novo))
-        ])
+        if abs(f(x_novo)) < eps_1:
+            return x_novo, k+1
+        if abs(x_novo - x)  < eps_2:
+            return x_novo, k+1
 
         x = x_novo
+        k = k + 1
 
-        if abs(f(x)) < tol:
-            return x, historico
-
-    return x, historico
+    return x, k
 ```
 
 ---
@@ -444,32 +433,15 @@ def newton(x0, tol=1e-10, max_iter=100):
 ## Método da Secante
 
 ```python
-def secante(x0, x1, tol=1e-10, max_iter=100):
-    historico = []
+def secante(f, x0, x1, eps_1, eps_2, kmax=100):
+    for k in range(kmax):
 
-    f0 = f(x0)
-    f1 = f(x1)
+        x2 = x1-(f(x1) / (f(x1) - f(x0))) * (x1 - x0)
 
-    for k in range(1, max_iter + 1):
-        x2 = x1 - f1 * (x1 - x0) / (f1 - f0)
-        f2 = f(x2)
-
-        historico.append([
-            k,
-            x0,
-            x1,
-            x2,
-            f2,
-            abs(f2)
-        ])
-
-        if abs(f2) < tol:
-            return x2, historico
-
+        if abs(f(x2)) < eps_1 or abs(x2 - x1) < eps_2:
+            return x2, k + 1
         x0, x1 = x1, x2
-        f0, f1 = f1, f2
-
-    return x2, historico
+    return x2
 ```
 
 ---
@@ -567,10 +539,10 @@ print("Erro =", abs(lado_esquerdo - lado_direito))
 
 Todas são bibliotecas comuns do ecossistema Python.
 
-Caso necessário, podem ser instaladas com:
+Caso necessário, as dependências podem ser instaladas utilizando o arquivo `pyproject.toml`, localizado na pasta raiz do projeto. No terminal, execute:
 
 ```bash
-pip install pandas matplotlib jupyter
+pip install -e .
 ```
 
 ---

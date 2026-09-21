@@ -17,4 +17,3 @@ def newton_raphson(f, f_, x0, eps_1, eps_2, k_max=100):
         k = k + 1
 
     return x, k
-

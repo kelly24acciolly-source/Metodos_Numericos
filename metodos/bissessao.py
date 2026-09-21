@@ -14,10 +14,4 @@ def bissessao(f, a, b, eps, k_max=100):
 
     return (a + b) / 2, k
 
-f = lambda x: ( 1 / math.sqrt(900 - x**2)) + (1 / math.sqrt(400 - x**2)) - 1/8
 
-a = 16
-b = 17
-eps = 0.001
-
-print(bissessao(f=f, a=a, b=b, eps=eps))

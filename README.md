@@ -59,7 +59,7 @@ O problema consiste em encontrar numericamente `x`.
 Para aplicar os métodos numéricos, colocamos toda a expressão em um único lado:
 
 $$
-f(x) = \frac{1}{8} - \frac{1}{\sqrt{900-x^2}} - \frac{1}{\sqrt{400-x^2}}
+f(x) = \frac{1}{\sqrt{900-x^2}} + \frac{1}{\sqrt{400-x^2}} - \frac{1}{8}
 $$
 
 Assim, procuramos uma raiz tal que:
@@ -73,7 +73,7 @@ $$
 O método de Newton-Raphson precisa da derivada de `f(x)`:
 
 $$
-f'(x) = -\frac{x}{(900-x^2)^{3/2}} - \frac{x}{(400-x^2)^{3/2}}
+f'(x) = \frac{x}{(900-x^2)^{3/2}} + \frac{x}{(400-x^2)^{3/2}}
 $$
 
 ---
@@ -362,9 +362,9 @@ A biblioteca `pandas` é utilizada para organizar as tabelas de iterações e `m
 ```python
 def f(x):
     return (
-        1/8
-        - 1/math.sqrt(30**2 - x**2)
-        - 1/math.sqrt(20**2 - x**2)
+        1/math.sqrt(30**2 - x**2)
+        + 1/math.sqrt(20**2 - x**2)
+        - 1/8
     )
 ```
 
@@ -375,8 +375,8 @@ def f(x):
 ```python
 def df(x):
     return (
-        -x/(30**2 - x**2)**1.5
-        -x/(20**2 - x**2)**1.5
+        x/(30**2 - x**2)**1.5
+        + x/(20**2 - x**2)**1.5
     )
 ```
 
@@ -385,26 +385,23 @@ def df(x):
 ## Método da Bisseção
 
 ```python
-def bissecao(a, b, tol=1e-10, max_iter=100):
-    fa = f(a)
-    historico = []
-
-    for k in range(1, max_iter + 1):
+def bissessao(f, a, b, eps=1e-10, k_max=100):
+    k = 0
+    while k < k_max:
         x = (a + b) / 2
         fx = f(x)
 
-        historico.append([k, a, b, x, fx, abs(fx)])
-
-        if abs(fx) < tol or (b - a) / 2 < tol:
-            return x, historico
-
-        if fa * fx < 0:
+        if abs(fx) < eps or (b - a) / 2 < eps:
+            return x, k + 1
+        
+        if f(a) * fx < 0:
             b = x
         else:
             a = x
-            fa = fx
 
-    return x, historico
+        k = k + 1
+
+    return x, k
 ```
 
 ---
@@ -412,31 +409,23 @@ def bissecao(a, b, tol=1e-10, max_iter=100):
 ## Método de Newton-Raphson
 
 ```python
-def newton(x0, tol=1e-10, max_iter=100):
-    historico = []
+def newton_raphson(f, f_, x0, eps_1=1e-10, eps_2, k_max=100):
+    k = 0
+
     x = x0
 
-    for k in range(1, max_iter + 1):
-        fx = f(x)
-        dfx = df(x)
+    while k < k_max:
+        x_novo = x - f(x) / f_(x)
 
-        x_novo = x - fx / dfx
-
-        historico.append([
-            k,
-            x,
-            fx,
-            dfx,
-            x_novo,
-            abs(f(x_novo))
-        ])
+        if abs(f(x_novo)) < eps_1:
+            return x_novo, k+1
+        if abs(x_novo - x)  < eps_2:
+            return x_novo, k+1
 
         x = x_novo
+        k = k + 1
 
-        if abs(f(x)) < tol:
-            return x, historico
-
-    return x, historico
+    return x, k
 ```
 
 ---
@@ -444,32 +433,15 @@ def newton(x0, tol=1e-10, max_iter=100):
 ## Método da Secante
 
 ```python
-def secante(x0, x1, tol=1e-10, max_iter=100):
-    historico = []
+def secante(f, x0, x1, eps_1, eps_2, kmax=100):
+    for k in range(kmax):
 
-    f0 = f(x0)
-    f1 = f(x1)
+        x2 = x1-(f(x1) / (f(x1) - f(x0))) * (x1 - x0)
 
-    for k in range(1, max_iter + 1):
-        x2 = x1 - f1 * (x1 - x0) / (f1 - f0)
-        f2 = f(x2)
-
-        historico.append([
-            k,
-            x0,
-            x1,
-            x2,
-            f2,
-            abs(f2)
-        ])
-
-        if abs(f2) < tol:
-            return x2, historico
-
+        if abs(f(x2)) < eps_1 or abs(x2 - x1) < eps_2:
+            return x2, k + 1
         x0, x1 = x1, x2
-        f0, f1 = f1, f2
-
-    return x2, historico
+    return x2
 ```
 
 ---
@@ -477,9 +449,9 @@ def secante(x0, x1, tol=1e-10, max_iter=100):
 ## Execução
 
 ```python
-x_bis, hist_bis = bissecao(0, 19.9)
-x_newton, hist_newton = newton(15)
-x_sec, hist_sec = secante(10, 19)
+raiz_bis, k_bis = bissessao(f, 0.0, 19.9, eps=TOL, k_max=MAX_ITER)
+raiz_newton, k_newton = newton_raphson(f, df, 15.0, eps_1=TOL, eps_2=TOL, k_max=MAX_ITER,)
+raiz_sec, k_sec = secante(f, 10.0, 19.0, eps_1=TOL, eps_2=TOL, kmax=MAX_ITER,)
 ```
 
 ```python
@@ -493,44 +465,15 @@ print("Secante:", x_sec)
 ## Tabelas
 
 ```python
-df_bis = pd.DataFrame(
-    hist_bis,
-    columns=["Iteração", "a", "b", "x", "f(x)", "|f(x)|"]
+resultados = pd.DataFrame(
+    [
+        ["Bisseção", "[0, 19,9]", k_bis, raiz_bis, abs(f(raiz_bis))],
+        ["Newton-Raphson", "x₀ = 15", k_newton, raiz_newton, abs(f(raiz_newton))],
+        ["Secante", "x₀ = 10; x₁ = 19", k_sec, raiz_sec, abs(f(raiz_sec))],
+    ],
+    columns=["Método", "Dados iniciais", "Iterações", "x (m)", "Resíduo |f(x)|"],
 )
-```
-
-```python
-df_newton = pd.DataFrame(
-    hist_newton,
-    columns=[
-        "Iteração",
-        "x_k",
-        "f(x_k)",
-        "f'(x_k)",
-        "x_k+1",
-        "|f(x_k+1)|"
-    ]
-)
-```
-
-```python
-df_sec = pd.DataFrame(
-    hist_sec,
-    columns=[
-        "Iteração",
-        "x_k-1",
-        "x_k",
-        "x_k+1",
-        "f(x_k+1)",
-        "|f(x_k+1)|"
-    ]
-)
-```
-
-```python
-exibir(df_bis)
-exibir(df_newton)
-exibir(df_sec)
+resultados
 ```
 
 ---
@@ -538,20 +481,19 @@ exibir(df_sec)
 ## Verificação
 
 ```python
-a = math.sqrt(30**2 - x_newton**2)
-b = math.sqrt(20**2 - x_newton**2)
 
-lado_esquerdo = 1/8
-lado_direito = 1/a + 1/b
-```
+x = raiz_newton
+a = math.sqrt(L1**2 - x**2)
+b = math.sqrt(L2**2 - x**2)
+h_calculada = 1 / (1 / a + 1 / b)
 
-```python
-print("x =", x_newton)
-print("a =", a)
-print("b =", b)
-print("1/8 =", lado_esquerdo)
-print("1/a + 1/b =", lado_direito)
-print("Erro =", abs(lado_esquerdo - lado_direito))
+print(f"Largura do galpão: x = {x:.12f} m")
+print(f"Altura na parede da viga de 30 m: a = {a:.12f} m")
+print(f"Altura na parede da viga de 20 m: b = {b:.12f} m")
+print(f"Altura de cruzamento verificada: h = {h_calculada:.12f} m")
+print("Erro =", abs(h_calculada - 8.0))
+assert math.isclose(h_calculada, 8.0, rel_tol=0, abs_tol=1e-9)
+print("Verificação física aprovada.")
 ```
 
 ---
@@ -567,10 +509,10 @@ print("Erro =", abs(lado_esquerdo - lado_direito))
 
 Todas são bibliotecas comuns do ecossistema Python.
 
-Caso necessário, podem ser instaladas com:
+Caso necessário, as dependências podem ser instaladas utilizando o arquivo `pyproject.toml`, localizado na pasta raiz do projeto. No terminal, execute:
 
 ```bash
-pip install pandas matplotlib jupyter
+pip install -e .
 ```
 
 ---

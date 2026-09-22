@@ -491,8 +491,8 @@ print(f"Largura do galpão: x = {x:.12f} m")
 print(f"Altura na parede da viga de 30 m: a = {a:.12f} m")
 print(f"Altura na parede da viga de 20 m: b = {b:.12f} m")
 print(f"Altura de cruzamento verificada: h = {h_calculada:.12f} m")
+print("Erro =", abs(h_calculada - 8.0))
 assert math.isclose(h_calculada, 8.0, rel_tol=0, abs_tol=1e-9)
-print("Erro =", abs(lado_esquerdo - lado_direito))
 print("Verificação física aprovada.")
 ```
 

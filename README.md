@@ -409,7 +409,7 @@ def bissessao(f, a, b, eps=1e-10, k_max=100):
 ## Método de Newton-Raphson
 
 ```python
-def newton_raphson(f, f_, x0, eps_1=1e-10, eps_2, k_max=100):
+def newton_raphson(f, f_, x0, eps_1=1e-10, eps_2=1e-10, k_max=100):
     k = 0
 
     x = x0
@@ -455,9 +455,9 @@ raiz_sec, k_sec = secante(f, 10.0, 19.0, eps_1=TOL, eps_2=TOL, kmax=MAX_ITER,)
 ```
 
 ```python
-print("Bisseção:", x_bis)
-print("Newton-Raphson:", x_newton)
-print("Secante:", x_sec)
+print("Bisseção:", raiz_bis)
+print("Newton-Raphson:", raiz_newton)
+print("Secante:", raiz_sec)
 ```
 
 ---
